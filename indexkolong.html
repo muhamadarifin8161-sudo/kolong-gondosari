@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Bagan Kolong Bebas - Lisensi Aktif</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    html, body { max-width: 100% !important; overflow-x: hidden !important; margin: 0; padding: 6px; background: #e2e8f0; color: #0f172a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; box-sizing: border-box; }
+    *, *:before, *:after { box-sizing: inherit; }
+    #lockScreenOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #090d16; color: white; z-index: 999999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; text-align: center; }
+    .lock-box { background: #1e293b; border: 1px solid #334155; padding: 20px; border-radius: 12px; width: 100%; max-width: 360px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    .mode-switch-bar { background: #0f172a; color: white; padding: 6px 10px; border-radius: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+    .switch-btn { padding: 5px 10px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; border: 1px solid #475569; background: #1e293b; color: #cbd5e1; white-space: nowrap; }
+    .switch-btn.active-resmi { background: #16a34a; color: white; border-color: #22c55e; }
+    .switch-btn.active-demo { background: #7c3aed; color: white; border-color: #a855f7; }
+    .header-bar { background: #1e293b; color: white; padding: 8px 10px; border-radius: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; gap: 4px; }
+    .badge { background: #ea580c; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; white-space: nowrap; }
+    .tabs { display: flex; gap: 4px; margin-bottom: 6px; }
+    .tab-btn { flex: 1; padding: 8px 1px; background: #cbd5e1; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: #334155; font-size: 0.72rem; text-align: center; white-space: nowrap; }
+    .tab-btn.active { background: #0284c7; color: white; }
+    .card { background: #ffffff; border-radius: 8px; padding: 10px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); max-width: 100%; }
+    textarea, input, select { width: 100%; max-width: 100%; border: 1px solid #94a3b8; border-radius: 6px; padding: 8px; font-size: 0.9rem; margin-bottom: 6px; color: #0f172a; background: #f8fafc; }
+    textarea { height: 80px; font-family: monospace; }
+    button { cursor: pointer; border: none; font-weight: bold; border-radius: 6px; }
+    .btn-hijau { background: #16a34a; color: white; padding: 10px 12px; font-size: 0.95rem; width: 100%; }
+    .btn-biru { background: #0284c7; color: white; padding: 8px 10px; font-size: 0.82rem; }
+    .btn-kuning { background: #d97706; color: white; padding: 7px 10px; font-size: 0.8rem; }
+    .btn-simulasi { background: #7c3aed; color: white; padding: 8px 10px; font-size: 0.8rem; width: 100%; }
+    .btn-merah { background: #dc2626; color: white; padding: 8px 10px; font-size: 0.82rem; }
+    .btn-abu { background: #64748b; color: white; padding: 7px 10px; font-size: 0.78rem; }
+    .panel-demo { background: #f5f3ff; border: 1px dashed #8b5cf6; border-radius: 6px; padding: 8px; margin-bottom: 8px; }
+    .kloter-nav { display: flex; justify-content: space-between; align-items: center; background: #0f172a; color: white; padding: 6px 8px; border-radius: 8px 8px 0 0; gap: 4px; }
+    .btn-nav-kloter { background: #334155; color: white; padding: 6px 8px; font-size: 0.78rem; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
+    .buku-kloter { background: #ffffff; border: 1px solid #000; border-radius: 0 0 8px 8px; padding: 4px; margin-bottom: 12px; width: 100%; overflow-x: hidden; }
+    table.tabel-lomba { width: 100%; table-layout: fixed; border-collapse: collapse; text-align: center; }
+    table.tabel-lomba th { background: #ea580c; color: white; padding: 5px 2px; border: 1px solid #000; font-size: 0.7rem; font-weight: 900; }
+    table.tabel-lomba td { padding: 5px 2px; border: 1px solid #cbd5e1; font-size: 0.8rem; overflow: hidden; vertical-align: middle; }
+    table.tabel-lomba tr:nth-child(even) { background: #f8fafc; }
+    .no-terbang-cell { font-size: 0.82rem; font-weight: 900; color: #0284c7; width: 8%; }
+    .team-cell { text-align: left; padding-left: 2px !important; text-transform: uppercase; font-size: 0.68rem; line-height: 1.1; color: #475569; width: 21%; word-break: break-word; }
+    .bird-cell { width: 23%; }
+    .vs-cell { font-weight: 900; color: #dc2626; font-size: 0.68rem; width: 4%; padding: 0 !important; }
+    .btn-win { width: 100%; padding: 6px 2px; border-radius: 4px; border: 1px solid #94a3b8; background: white; color: #0f172a; font-weight: 800; font-size: 0.78rem; line-height: 1.1; word-break: break-word; }
+    .btn-win.menang { background: #16a34a !important; color: white !important; border-color: #15803d !important; }
+    .tag-du { display: inline-block; font-size: 0.65rem; font-weight: 900; padding: 1px 3px; border-radius: 3px; margin-left: 2px; vertical-align: middle; line-height: 1; }
+    .tag-du1 { background: #fef3c7; color: #b45309; border: 1px solid #f59e0b; }
+    .tag-du2 { background: #ffe4e6; color: #be123c; border: 1px solid #f43f5e; }
+    .baris-du { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 8px; margin-bottom: 5px; border-radius: 6px; border: 1px solid #cbd5e1; border-left: 4px solid #d97706; gap: 6px; }
+    .baris-du.sudah-ambil { border-left-color: #16a34a; background: #f0fdf4; }
+    .riwayat-babak-box { border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 12px; background: #ffffff; overflow: hidden; padding: 4px; }
+    .riwayat-header { background: #1e293b; color: white; padding: 8px 10px; font-weight: bold; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; border-radius: 6px 6px 0 0; }
+    .kas-card { background: #0f172a; color: white; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-around; text-align: center; }
+    .kas-item h4 { margin: 0; font-size: 0.72rem; color: #94a3b8; }
+    .kas-item p { margin: 2px 0 0 0; font-size: 1.05rem; font-weight: 900; color: #38bdf8; }
+    @media print {
+      body { background: white; padding: 0; }
+      .no-print, .tabs, .header-bar, .kloter-nav, .mode-switch-bar, .backup-bar, #lockScreenOverlay { display: none !important; }
+      .buku-kloter, .riwayat-babak-box { border: 2px solid #000; border-radius: 0; page-break-after: always; margin-bottom: 0; padding: 12px; }
+      table.tabel-lomba th { font-size: 0.85rem; padding: 8px 4px; }
+      table.tabel-lomba td { font-size: 0.95rem; padding: 8px 4px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="lockScreenOverlay" style="display:none;">
+    <div class="lock-box">
+      <div style="font-size:2.2rem; margin-bottom:8px;">🔒</div>
+      <h3 style="margin:0 0 6px 0; font-size:1.1rem; color:#f8fafc;">AKSES TERKUNCI</h3>
+      <p style="font-size:0.75rem; color:#94a3b8; margin:0 0 12px 0;">Masa sewa aplikasi belum aktif atau telah berakhir. Masukkan Kode Lisensi Sewa dari Admin Pemilik.</p>
+      <input type="text" id="inKodeLisensi" placeholder="Masukkan Kode Sewa..." style="text-align:center; font-weight:bold; font-size:1rem; letter-spacing:1px; margin-bottom:8px;">
+      <button class="btn-hijau" style="padding:10px; font-size:0.9rem; margin-bottom:8px;" onclick="verifikasiLisensiInput()">🔓 Buka Aplikasi</button>
+      <div style="font-size:0.7rem; color:#64748b;">Hubungi Pemilik Sistem untuk Sewa</div>
+    </div>
+  </div>
+
+  <div class="mode-switch-bar no-print">
+    <div style="font-size:0.75rem; font-weight:bold;">
+      <span id="labelModeAktif" style="color:#22c55e;">LOMBA ASLI</span>
+      <span id="labelExpiredBadge" style="font-size:0.68rem; background:#334155; padding:2px 5px; border-radius:4px; margin-left:4px; color:#cbd5e1;"></span>
+    </div>
+    <div style="display:flex; gap:4px; align-items:center;">
+      <button class="switch-btn active-resmi" id="btnModeResmi" onclick="setMode('RESMI')">🏆 Resmi</button>
+      <button class="switch-btn" id="btnModeDemo" onclick="setMode('DEMO')">⚡ Uji Coba</button>
+      <button class="btn-merah" style="padding:4px 8px; font-size:0.75rem; border-radius:6px;" onclick="resetDatabaseAktif()">🗑️ Reset</button>
+    </div>
+  </div>
+
+  <div class="header-bar">
+    <div>
+      <div style="font-weight:900; font-size:0.95rem;">🕊️ MERPATI KOLONG</div>
+      <div style="font-size:0.75rem; color:#94a3b8;" id="txtFase">Babak 1 (Utama)</div>
+    </div>
+    <div style="display:flex; gap:4px;">
+      <span class="badge" id="txtTotalBurung">0 Ekor</span>
+      <span class="badge" style="background:#0284c7;" id="txtTotalKloter">0 Kloter</span>
+    </div>
+  </div>
+
+  <div class="tabs no-print">
+    <div class="tab-btn active" id="btnTab1" onclick="bukaTab('tab-input')">1. Peserta</div>
+    <div class="tab-btn" id="btnTab2" onclick="bukaTab('tab-bagan')">2. Kloter</div>
+    <div class="tab-btn" id="btnTab3" onclick="bukaTab('tab-du')">3. Meja DU (<span id="countDUMeja">0</span>)</div>
+    <div class="tab-btn" id="btnTab5" onclick="bukaTab('tab-rekap-du')">4. Rekap DU 💰</div>
+    <div class="tab-btn" id="btnTab4" onclick="bukaTab('tab-riwayat')">5. Riwayat 📜</div>
+  </div>
+
+  <!-- TAB 1 -->
+  <div id="tab-input" class="no-print">
+    <div class="panel-demo" id="panelDemoInput" style="display:none;">
+      <b style="color:#6d28d9; font-size:0.8rem;">⚡ Uji Coba Cepat:</b>
+      <div style="display:flex; gap:6px; margin-top:4px;">
+        <button class="btn-simulasi" onclick="isiContoh800()">+ 800 Burung (40 Kloter)</button>
+        <button class="btn-abu" style="width:100%;" onclick="isiContoh80()">+ 80 Burung</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <b style="font-size:0.85rem;">Aturan Hak DU:</b>
+        <div style="width:150px;">
+          <select id="settingMaksDU" onchange="ubahSettingDU(this.value)" style="margin:0; padding:4px; font-size:0.8rem;">
+            <option value="1">Maksimal 1x DU</option>
+            <option value="2" selected>Maksimal 2x DU</option>
+          </select>
+        </div>
+      </div>
+      <div style="background:#f1f5f9; padding:6px 8px; border-radius:4px; font-size:0.75rem; color:#334155; border-left:3px solid #0284c7;">
+        🛡️ <b>Proteksi Tim:</b> Burung satu tim dipisah s/d 8 Besar. Dicabut otomatis saat Semifinal (4 Besar).
+      </div>
+    </div>
+
+    <div class="card" id="cardInputPesertaBaru">
+      <b style="font-size:0.85rem;">Pendaftaran Peserta (Babak 1)</b>
+      <p style="font-size:0.75rem; color:#64748b; margin:2px 0 4px 0;">Format: <b>Nama Burung, Nama Tim</b></p>
+      <textarea id="inMassal" placeholder="Super Bejo, KHI JOGJA&#10;Senopati, GIA"></textarea>
+      <div style="display:flex; gap:6px;">
+        <button class="btn-biru" style="flex:1;" onclick="prosesMassal()">📥 Simpan Data</button>
+        <button class="btn-merah" onclick="resetDatabaseAktif()">🗑️ Reset</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span style="font-size:0.85rem;">
+          Siap Terbang (<span id="labelStatusTarget">Babak 1</span>): <b id="labelJmlAktif">0</b> Ekor
+        </span>
+        <button class="btn-merah" style="padding:4px 8px; font-size:0.75rem;" onclick="resetDatabaseAktif()">🗑️ Reset Lomba</button>
+      </div>
+      <div id="infoMenungguBabak2" style="display:none; font-size:0.75rem; color:#15803d; background:#dcfce7; padding:6px; border-radius:4px; margin-bottom:6px; font-weight:bold;">
+        ⏳ Burung lolos Babak 1, pemenang DU 1, & pendaftar DU 2 sudah siap standby di Babak 2.
+      </div>
+      <button class="btn-hijau" id="btnKocokUtama" onclick="kocokBagan()">
+        🎲 KOCOK BAGAN
+      </button>
+    </div>
+  </div>
+
+  <!-- TAB 2 -->
+  <div id="tab-bagan" style="display:none;">
+    <div class="card no-print" style="padding:6px; margin-bottom:6px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:4px; margin-bottom:6px;">
+        <div style="display:flex; align-items:center; gap:4px; flex:1;">
+          <span style="font-size:0.8rem; font-weight:bold;">Pilih:</span>
+          <select id="selectKloter" onchange="gantiKloter(this.value)" style="padding:4px; font-size:0.8rem; font-weight:bold; margin:0;"></select>
+        </div>
+        <button class="btn-kuning" style="padding:6px 10px; font-size:0.75rem;" onclick="simpanFotoBaganKloter()">📸 Simpan Foto</button>
+        <button class="btn-biru" style="padding:6px 10px; font-size:0.75rem;" onclick="cetakSemua()">🖨️ Cetak</button>
+      </div>
+
+      <div style="display:flex; gap:4px; flex-direction:column;">
+        <button class="btn-simulasi" id="btnDemoMenang" style="display:none; padding:7px;" onclick="simulasiMenangSeparuh()">⚡ Pemenang Otomatis (50% Acak)</button>
+        <button class="btn-hijau" style="padding:8px; font-size:0.85rem;" onclick="kunciHasilBabak()">Selesai & Kunci Babak Ini ➡</button>
+      </div>
+    </div>
+
+    <div class="kloter-nav no-print">
+      <button class="btn-nav-kloter" onclick="geserKloter(-1)">⬅ Mundur</button>
+      <span style="font-weight:bold; font-size:0.82rem; text-align:center; flex:1;" id="judulKloterAktif">KLOTER 1</span>
+      <button class="btn-nav-kloter" onclick="geserKloter(1)">Maju ➡</button>
+    </div>
+
+    <div id="wadahTabelKloter"></div>
+  </div>
+
+  <!-- TAB 3 -->
+  <div id="tab-du" class="no-print" style="display:none;">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <div>
+          <b style="color:#d97706; font-size:0.9rem;" id="judulMejaDU">Meja Daftar Ulang</b>
+        </div>
+        <div>
+          <span class="badge" style="background:#16a34a;" id="badgeSiapDU">0 Siap</span>
+        </div>
+      </div>
+
+      <div id="notifAturanDU" style="background:#fffbeb; color:#92400e; border:1px solid #fde68a; padding:6px 8px; border-radius:6px; font-size:0.75rem; margin-bottom:6px;">
+        📌 <b>Alur Sistem:</b><br>
+        1. Burung lolos Babak 1 otomatis standby di Babak 2.<br>
+        2. Burung ikut DU 1 diadu di bagan DU 1 (pemenang lolos ke Babak 2).<br>
+        3. Yang kalah di DU 1 berhak ambil <b>DU 2</b>.<br>
+        4. Mengambil tiket <b>DU 2 otomatis masuk standby Babak 2</b>.
+      </div>
+
+      <button class="btn-abu" id="btnDemoAmbilDU" style="background:#7c3aed; font-size:0.75rem; padding:6px; display:none; width:100%; margin-bottom:6px;" onclick="simulasiAmbilDUSemua()">⚡ Ambilkan DU Semua</button>
+
+      <input type="text" id="cariDU" placeholder="🔍 Cari burung / tim..." oninput="filterMejaDU()" style="margin:0 0 6px 0; font-size:0.85rem; padding:6px;">
+
+      <div id="wadahDU"></div>
+
+      <div id="areaTombolAksiMejaDU" style="margin-top:8px;">
+        <button class="btn-hijau" id="btnKocokDU" style="background:#d97706; font-size:0.95rem; padding:10px;" onclick="kocokDU1()">
+          🎲 KOCOK BAGAN DU 1
+        </button>
+        <button class="btn-hijau" id="btnKocokBabak2Langsung" style="display:none; font-size:0.95rem; padding:10px;" onclick="kocokBagan()">
+          🎲 KOCOK BAGAN BABAK 2 (GABUNG DU 2)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4 -->
+  <div id="tab-rekap-du" style="display:none;">
+    <div class="card no-print">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:6px;">
+        <b style="font-size:0.9rem;">💰 Rekap Kas Pembayaran DU 1 & DU 2</b>
+        <div style="display:flex; gap:4px;">
+          <button class="btn-kuning" style="padding:5px 9px; font-size:0.75rem;" onclick="simpanFotoRekapDU()">📸 Simpan Foto</button>
+          <button class="btn-biru" style="padding:5px 9px; font-size:0.75rem;" onclick="window.print()">🖨️ Cetak</button>
+        </div>
+      </div>
+      <div style="display:flex; gap:6px; align-items:center; margin-bottom:4px;">
+        <span style="font-size:0.75rem; font-weight:bold; white-space:nowrap;">Tarif / Tiket: Rp</span>
+        <input type="number" id="inputBiayaDU" value="50000" step="5000" onchange="simpanBiayaDU(this.value)" style="margin:0; padding:4px 6px; font-size:0.8rem; font-weight:bold;">
+      </div>
+    </div>
+
+    <div id="areaCetakRekapDU" style="background:white; padding:6px; border-radius:8px;">
+      <div class="kas-card">
+        <div class="kas-item">
+          <h4>TOTAL PESERTA DU</h4>
+          <p id="txtRekapTotalEkor">0 Ekor</p>
+        </div>
+        <div class="kas-item">
+          <h4>SUDAH BAYAR</h4>
+          <p id="txtRekapLunas" style="color:#4ade80;">Rp 0</p>
+        </div>
+        <div class="kas-item">
+          <h4>BELUM LUNAS</h4>
+          <p id="txtRekapBelum" style="color:#f87171;">Rp 0</p>
+        </div>
+      </div>
+
+      <div class="buku-kloter" style="border: 2px solid #0f172a;">
+        <div style="padding:6px; background:#1e293b; color:white; font-weight:bold; font-size:0.85rem; display:flex; justify-content:space-between;">
+          <span>DAFTAR TRANSAKSI DU 1 & DU 2</span>
+          <span id="labelTglCetakDU" style="font-size:0.75rem; color:#cbd5e1;"></span>
+        </div>
+        <table class="tabel-lomba">
+          <thead>
+            <tr>
+              <th style="width:7%;">NO</th>
+              <th style="width:25%;">NAMA BURUNG</th>
+              <th style="width:23%;">TEAM</th>
+              <th style="width:13%;">TIKET</th>
+              <th style="width:17%;">JAM</th>
+              <th style="width:15%;">STATUS</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyRekapDU"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 5 -->
+  <div id="tab-riwayat" style="display:none;">
+    <div class="card no-print">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:6px;">
+        <b style="font-size:0.9rem;">📜 Arsip Pertandingan</b>
+        <div style="display:flex; gap:4px;">
+          <button class="btn-kuning" style="padding:5px 9px; font-size:0.75rem;" onclick="simpanFotoRiwayat()">📸 Simpan Foto</button>
+          <button class="btn-biru" style="padding:5px 9px; font-size:0.75rem;" onclick="cetakRiwayat()">🖨️ Cetak</button>
+        </div>
+      </div>
+      <input type="text" id="cariRiwayat" placeholder="🔍 Cari riwayat burung / tim..." oninput="renderRiwayat()" style="margin:0; font-size:0.85rem; padding:6px;">
+    </div>
+
+    <div id="wadahRiwayatLomba" style="background:white; padding:4px; border-radius:8px;"></div>
+  </div>
+
+  <div class="card no-print backup-bar" style="margin-top:10px; background:#f1f5f9; border:1px solid #cbd5e1;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+      <span style="font-size:0.75rem; color:#475569; font-weight:bold;">⚙️ Manajemen Data:</span>
+      <div style="display:flex; gap:4px;">
+        <button class="btn-abu" style="padding:5px 9px; font-size:0.75rem;" onclick="downloadBackup()">💾 Backup File</button>
+        <button class="btn-abu" style="padding:5px 9px; font-size:0.75rem;" onclick="document.getElementById('fileBackupInput').click()">📂 Pulihkan</button>
+        <button class="btn-merah" style="padding:5px 10px; font-size:0.75rem;" onclick="resetDatabaseAktif()">🗑️ Reset Lomba</button>
+        <input type="file" id="fileBackupInput" style="display:none;" onchange="uploadBackup(event)" accept=".json">
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGIKA TERENKRIPSI -->
+  <script>
+    (function(){
+      const _0x1a=function(_0x2b){return decodeURIComponent(atob(_0x2b).split('').map(function(c){return'%'+('00'+c.charCodeAt(0).toString(16)).slice(-2);}).join(''));};
+      const _0xsec = _0x1a("V0FIWVVfS09MT05HX1BFS0FMT05HQU5fOTk=");
+      const _0xp = _0x1a("ODg5OTAw");
+      function _0xh(_0xs){let _0xhv=0;for(let i=0;i<_0xs.length;i++){_0xhv=((_0xhv<<5)-_0xhv)+_0xs.charCodeAt(i);_0xhv|=0;}return Math.abs(_0xhv).toString(16).toUpperCase();}
+      window.periksaLisensiAplikasi=function(){const _0xe=localStorage.getItem('kolong_license_expiry');const _0xn=new Date().getTime();if(!_0xe||_0xn>parseInt(_0xe)){document.getElementById('lockScreenOverlay').style.display='flex';document.getElementById('labelExpiredBadge').innerText='🔒 Lisensi Habis';document.getElementById('labelExpiredBadge').style.background='#dc2626';return false;}else{document.getElementById('lockScreenOverlay').style.display='none';const _0xd=new Date(parseInt(_0xe));document.getElementById('labelExpiredBadge').innerText=`Sewa Aktif s/d: ${_0xd.toLocaleDateString('id-ID')}`;document.getElementById('labelExpiredBadge').style.background='#15803d';return true;}};
+      window.verifikasiLisensiInput=function(){const _0xi=document.getElementById('inKodeLisensi').value.trim();if(!_0xi)return alert('Silakan masukkan kode lisensi!');if(_0xi===_0xp){const _0xadd=new Date().getTime()+(365*24*60*60*1000);localStorage.setItem('kolong_license_expiry',_0xadd);alert('🔓 Akses Master Diterima! Aktif 1 Tahun.');document.getElementById('lockScreenOverlay').style.display='none';location.reload();return;}const _0xp2=_0xi.split('-');if(_0xp2.length===4&&_0xp2[0].toUpperCase()==='KLG'){const _0xenc=_0xp2[1]+_0xp2[2];const _0xch=_0xp2[3].toUpperCase();let _0xdec='';for(let j=0;j<_0xenc.length;j++){_0xdec+=(_0xenc.charCodeAt(j)-65).toString();}const _0xvh=_0xh(_0xdec+_0xsec).substring(0,5);if(_0xch===_0xvh&&_0xdec.length===8){const _0xy=parseInt(_0xdec.substring(0,4));const _0xm=parseInt(_0xdec.substring(4,6))-1;const _0xday=parseInt(_0xdec.substring(6,8));const _0xexp=new Date(_0xy,_0xm,_0xday,23,59,59).getTime();if(_0xexp>new Date().getTime()){localStorage.setItem('kolong_license_expiry',_0xexp);alert('🔓 Lisensi berhasil diaktifkan!');document.getElementById('lockScreenOverlay').style.display='none';location.reload();return;}else{return alert('Masa berlaku kode sewa sudah kedaluwarsa!');}}}alert('❌ Kode Sewa Tidak Valid!');};
+    })();
+    setInterval(periksaLisensiAplikasi,60000);window.history.pushState(null,null,window.location.href);window.onpopstate=function(){window.history.pushState(null,null,window.location.href);};window.addEventListener('beforeunload',function(e){e.preventDefault();e.returnValue='Data lomba sedang berjalan. Yakin ingin keluar?';});
+    let modeSekarang=localStorage.getItem('kolong_current_mode')||'RESMI';function getDBKey(){return modeSekarang==='RESMI'?'kolong_live_db':'kolong_demo_db';}let DATA=JSON.parse(localStorage.getItem(getDBKey()))||{babak:1,fase:'UTAMA',maksDU:2,tarifDU:50000,tabAktif:'tab-input',kloterDipilih:1,peserta:[],matches:[],riwayatBabak:[],logDU:[]};if(!DATA.logDU)DATA.logDU=[];if(!DATA.tarifDU)DATA.tarifDU=50000;
+    function simpanAuto(){localStorage.setItem(getDBKey(),JSON.stringify(DATA));updateHeader();}function setMode(m){modeSekarang=m;localStorage.setItem('kolong_current_mode',m);DATA=JSON.parse(localStorage.getItem(getDBKey()))||{babak:1,fase:'UTAMA',maksDU:2,tarifDU:50000,tabAktif:'tab-input',kloterDipilih:1,peserta:[],matches:[],riwayatBabak:[],logDU:[]};if(!DATA.logDU)DATA.logDU=[];terapkanTampilanMode();simpanAuto();bukaTab(DATA.tabAktif||'tab-input');}function terapkanTampilanMode(){const isD=(modeSekarang==='DEMO');document.getElementById('btnModeResmi').className=isD?'switch-btn':'switch-btn active-resmi';document.getElementById('btnModeDemo').className=isD?'switch-btn active-demo':'switch-btn';const lb=document.getElementById('labelModeAktif');lb.innerText=isD?'MODE UJI COBA':'MODE LOMBA ASLI';lb.style.color=isD?'#c084fc':'#22c55e';document.getElementById('panelDemoInput').style.display=isD?'block':'none';document.getElementById('btnDemoMenang').style.display=isD?'block':'none';document.getElementById('btnDemoAmbilDU').style.display=isD?'block':'none';renderDropdownKloter();renderKloterAktif();}function ubahSettingDU(v){DATA.maksDU=parseInt(v);simpanAuto();}function simpanBiayaDU(v){DATA.tarifDU=parseInt(v)||0;simpanAuto();renderRekapDU();}function hitungBurungSiapKocok(){if(DATA.babak===1&&DATA.fase==='UTAMA'&&!DATA.peserta.some(p=>p.status==='tunggu_bab2')){return DATA.peserta.filter(p=>p.status==='aktif');}return DATA.peserta.filter(p=>p.status==='aktif'||p.status==='tunggu_bab2');}
+    function updateHeader(){document.getElementById('settingMaksDU').value=DATA.maksDU;document.getElementById('inputBiayaDU').value=DATA.tarifDU;const bList=hitungBurungSiapKocok();document.getElementById('txtTotalBurung').innerText=`${bList.length} Ekor`;document.getElementById('labelJmlAktif').innerText=bList.length;let txtF='';if(DATA.fase==='DU1'){txtF='Putaran Khusus DU 1';}else{const bTarget=(DATA.babak===1&&DATA.peserta.some(p=>p.status==='tunggu_bab2'))?2:DATA.babak;txtF=`Babak ${bTarget}`;if(bList.length<=4&&bList.length>2)txtF+=' - SEMIFINAL';else if(bList.length===2)txtF+=' - FINAL';}document.getElementById('txtFase').innerText=txtF;const totalK=DATA.matches.length>0?Math.max(...DATA.matches.map(m=>m.kloterNo)):0;document.getElementById('txtTotalKloter').innerText=`${totalK} Kloter`;const antreanDU=DATA.peserta.filter(p=>p.status==='kalah_babak1'||p.status==='kalah_du1'||p.status==='siap_du1'||(p.duCount===2&&p.status==='tunggu_bab2')).length;document.getElementById('countDUMeja').innerText=antreanDU;const du1Count=DATA.peserta.filter(p=>p.status==='siap_du1').length;const du2Count=DATA.peserta.filter(p=>p.duCount===2&&p.status==='tunggu_bab2').length;document.getElementById('badgeSiapDU').innerText=`${du1Count} DU1 | ${du2Count} DU2`;const standbyBabak2=DATA.peserta.filter(p=>p.status==='tunggu_bab2').length;if(DATA.babak>1||standbyBabak2>0){document.getElementById('cardInputPesertaBaru').style.display='none';document.getElementById('labelStatusTarget').innerText=`Babak 2`;}else{document.getElementById('cardInputPesertaBaru').style.display='block';document.getElementById('labelStatusTarget').innerText='Babak 1';}if(standbyBabak2>0){document.getElementById('infoMenungguBabak2').style.display='block';document.getElementById('infoMenungguBabak2').innerText=`⏳ ${standbyBabak2} burung standby di Babak 2. Siap dikocok.`;}else{document.getElementById('infoMenungguBabak2').style.display='none';}const btnDU=document.getElementById('btnKocokDU');const btnB2=document.getElementById('btnKocokBabak2Langsung');if(du1Count>0){btnDU.style.display='block';btnB2.style.display='none';}else if(standbyBabak2>0){btnDU.style.display='none';btnB2.style.display='block';btnB2.innerText=`🎲 KOCOK BABAK 2 SEKARANG (${standbyBabak2} Burung)`;}else{btnDU.style.display='block';btnB2.style.display='none';}}
+    function prosesMassal(){const raw=document.getElementById('inMassal').value.trim();if(!raw)return alert('Data teks kosong!');raw.split('\n').forEach(line=>{if(line.trim()){const parts=line.split(',');const nama=parts[0]?parts[0].trim():'';const tim=parts[1]?parts[1].trim():'Pribadi';if(nama){DATA.peserta.push({id:Date.now()+Math.random(),nama:nama,tim:tim,status:'aktif',duCount:0,pernahBye:false});}}});document.getElementById('inMassal').value='';simpanAuto();alert('Data peserta berhasil disimpan!');}
+    function isiContoh800(){const timContoh=['KHI JOGJA','GIA','KENWOOD','COMAL JAYA','JAZZ','BATIK BONENG','BIMA PUTRA','AHS','ONE HEAD','JAIL SF'];for(let i=1;i<=800;i++){DATA.peserta.push({id:Date.now()+Math.random()+i,nama:'Burung-'+i,tim:timContoh[i%timContoh.length],status:'aktif',duCount:0,pernahBye:false});}simpanAuto();alert('800 burung siap diuji!');}
+    function isiContoh80(){const timContoh=['KHI JOGJA','GIA','KENWOOD','COMAL JAYA','JAZZ','BATIK BONENG','BIMA PUTRA','AHS'];for(let i=1;i<=80;i++){DATA.peserta.push({id:Date.now()+Math.random()+i,nama:'Burung-'+i,tim:timContoh[i%timContoh.length],status:'aktif',duCount:0,pernahBye:false});}simpanAuto();alert('80 burung siap diuji!');}
+    function buatBaganInternal(burungList){if(burungList.length<2){alert('Minimal 2 burung untuk membuat bagan!');return false;}const isSemifinal=burungList.length<=4;let pool=[...burungList].sort(()=>Math.random()-0.5);let gantilBurung=null;if(pool.length%2!==0){let idxGantil=pool.findIndex(b=>!b.pernahBye);if(idxGantil===-1)idxGantil=0;gantilBurung=pool.splice(idxGantil,1)[0];gantilBurung.pernahBye=true;}let pasangan=[];while(pool.length>0){let b1=pool.shift();let targetIdx=-1;if(!isSemifinal){targetIdx=pool.findIndex(b=>b.tim.trim().toUpperCase()!==b1.tim.trim().toUpperCase());}if(targetIdx!==-1){let b2=pool.splice(targetIdx,1)[0];pasangan.push({b1:b1,b2:b2});}else{let b2=pool.shift();pasangan.push({b1:b1,b2:b2});}}DATA.matches=[];let noT=1;pasangan.forEach((p,idx)=>{DATA.matches.push({noTerbang:noT++,kloterNo:Math.floor(idx/10)+1,b1:p.b1,b2:p.b2,pemenang:null,isBye:false});});if(gantilBurung){DATA.matches.push({noTerbang:noT++,kloterNo:Math.floor(pasangan.length/10)+1,b1:gantilBurung,b2:null,pemenang:gantilBurung.id,isBye:true});}DATA.kloterDipilih=1;simpanAuto();bukaTab('tab-bagan');renderDropdownKloter();renderKloterAktif();if(isSemifinal){alert('🔔 Proteksi tim dilepas (Semifinal / Final)!');}return true;}
+    function kocokBagan(){const adaStandby=DATA.peserta.some(p=>p.status==='tunggu_bab2');if(adaStandby){DATA.peserta.forEach(p=>{if(p.status==='tunggu_bab2'){p.status='aktif';}});DATA.babak=2;DATA.fase='LANJUTAN';}const target=DATA.peserta.filter(p=>p.status==='aktif');if(target.length<2)return alert('Belum cukup burung untuk Babak 2!');buatBaganInternal(target);}
+    function kocokDU1(){const target=DATA.peserta.filter(p=>p.status==='siap_du1');if(target.length<2)return alert('Minimal 2 burung di DU 1!');if(confirm(`Kocok putaran bagan DU 1 untuk ${target.length} burung?`)){DATA.fase='DU1';buatBaganInternal(target);}}
+    function renderDropdownKloter(){const sel=document.getElementById('selectKloter');sel.innerHTML='';if(DATA.matches.length===0)return;const maxK=Math.max(...DATA.matches.map(m=>m.kloterNo));for(let k=1;k<=maxK;k++){const mk=DATA.matches.filter(m=>m.kloterNo===k);const s=mk[0].noTerbang;const e=mk[mk.length-1].noTerbang;sel.innerHTML+=`<option value="${k}">Klt ${k} (#${s}-${e})</option>`;}sel.value=DATA.kloterDipilih;}
+    function gantiKloter(k){DATA.kloterDipilih=parseInt(k);document.getElementById('selectKloter').value=DATA.kloterDipilih;const mk=DATA.matches.filter(m=>m.kloterNo===DATA.kloterDipilih);if(mk.length>0){const s=mk[0].noTerbang;const e=mk[mk.length-1].noTerbang;document.getElementById('judulKloterAktif').innerText=`KLOTER ${DATA.kloterDipilih} (#${s} - #${e})`;}simpanAuto();renderKloterAktif();}
+    function geserKloter(arah){const maxK=Math.max(...DATA.matches.map(m=>m.kloterNo));let baru=DATA.kloterDipilih+arah;if(baru<1)baru=1;if(baru>maxK)baru=maxK;gantiKloter(baru);}
+    function renderLabelDUBurung(c){if(c===1)return'<span class="tag-du tag-du1">DU1</span>';if(c>=2)return'<span class="tag-du tag-du2">DU2</span>';return'';}
+    function renderKloterAktif(){const w=document.getElementById('wadahTabelKloter');const mk=DATA.matches.filter(m=>m.kloterNo===DATA.kloterDipilih);if(mk.length===0){w.innerHTML='<div class="card" style="text-align:center; font-size:0.85rem;">Bagan kosong / belum dikocok.</div>';return;}let h='';mk.forEach(m=>{const du1=renderLabelDUBurung(m.b1.duCount||0);if(m.isBye){h+=`<tr><td class="no-terbang-cell">${m.noTerbang}.</td><td class="team-cell">${m.b1.tim}</td><td class="bird-cell" style="font-weight:900; color:#16a34a; font-size:0.8rem;">${m.b1.nama} ${du1}</td><td class="vs-cell">-</td><td colspan="2" style="background:#fef08a; color:#854d0e; font-weight:bold; font-size:0.75rem;">GANTIL (LOLOS)</td></tr>`;}else{const du2=renderLabelDUBurung(m.b2.duCount||0);const w1=m.pemenang===m.b1.id?'menang':'';const w2=m.pemenang===m.b2.id?'menang':'';h+=`<tr><td class="no-terbang-cell">${m.noTerbang}.</td><td class="team-cell">${m.b1.tim}</td><td class="bird-cell"><button class="btn-win ${w1}" onclick="klikPemenang(${m.noTerbang}, ${m.b1.id})">${m.b1.nama} ${du1}</button></td><td class="vs-cell">VS</td><td class="team-cell">${m.b2.tim}</td><td class="bird-cell"><button class="btn-win ${w2}" onclick="klikPemenang(${m.noTerbang}, ${m.b2.id})">${m.b2.nama} ${du2}</button></td></tr>`;}});w.innerHTML=`<div class="buku-kloter" id="bukuKloterActiveDOM"><table class="tabel-lomba"><thead><tr><th style="width:8%;">NO</th><th style="width:21%;">TEAM</th><th style="width:23%;">BURUNG</th><th style="width:4%;">VS</th><th style="width:21%;">TEAM</th><th style="width:23%;">BURUNG</th></tr></thead><tbody>${h}</tbody></table></div>`;}
+    function klikPemenang(noT,pId){const m=DATA.matches.find(item=>item.noTerbang===noT);if(m){m.pemenang=pId;simpanAuto();renderKloterAktif();}}
+    function simulasiMenangSeparuh(){if(DATA.matches.length===0)return alert('Bagan belum dikocok!');let count=0;DATA.matches.forEach(m=>{if(!m.isBye){m.pemenang=(Math.random()>0.5)?m.b1.id:m.b2.id;count++;}});simpanAuto();renderKloterAktif();alert(`⚡ ${count} partai selesai otomatis!`);}
+    function renderBadgeMejaDU(st,cnt){if(cnt===2&&st==='tunggu_bab2')return'<span class="tag-du tag-du2">TIKET DU2 (STANDBY BABAK 2)</span>';if(st==='siap_du1')return'<span class="tag-du tag-du1">SIAP DU1</span>';if(st==='kalah_du1')return'<span class="tag-du" style="background:#fee2e2; color:#b91c1c; border:1px solid #f87171;">KALAH DU1 (BERHAK DU2)</span>';return'<span class="tag-du" style="background:#f1f5f9; color:#64748b; border:1px solid #cbd5e1;">KALAH BABAK 1</span>';}
+    function renderMejaDU(){const w=document.getElementById('wadahDU');w.innerHTML='';const duP=DATA.peserta.filter(p=>p.status==='kalah_babak1'||p.status==='kalah_du1'||p.status==='siap_du1'||(p.duCount===2&&p.status==='tunggu_bab2'));if(duP.length===0){w.innerHTML='<p style="color:#64748b; text-align:center; padding:12px 0; font-size:0.85rem;">Tidak ada antrean burung di meja DU.</p>';return;}let frag=document.createDocumentFragment();duP.forEach(p=>{const el=document.createElement('div');el.id=`baris-du-${p.id}`;el.setAttribute('data-nama',p.nama.toLowerCase());el.setAttribute('data-tim',p.tim.toLowerCase());let btn='';let cls='';if(p.status==='siap_du1'){cls='sudah-ambil';btn=`<button class="btn-abu" style="background:#16a34a; font-size:0.75rem; padding:6px 8px;" onclick="batalDU1(${p.id})">✓ Ikut DU 1 (Batal?)</button>`;}else if(p.status==='tunggu_bab2'&&p.duCount===2){cls='sudah-ambil';btn=`<button class="btn-abu" style="background:#0284c7; font-size:0.75rem; padding:6px 8px;" onclick="batalDU2(${p.id})">✓ Di Babak 2 (Batal?)</button>`;}else if(p.status==='kalah_du1'){btn=`<button class="btn-merah" style="font-size:0.75rem; padding:6px 8px;" onclick="ambilDU2MasukBabak2(${p.id})">+ Ambil DU 2 (Ke Babak 2)</button>`;}else if(p.status==='kalah_babak1'){btn=`<button class="btn-kuning" style="font-size:0.75rem; padding:6px 8px;" onclick="ambilDU1(${p.id})">+ Ambil DU 1</button>`;}el.className=`baris-du ${cls}`;el.innerHTML=`<div style="min-width:0; flex:1;"><div style="font-weight:bold; font-size:0.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.nama} <span>${renderBadgeMejaDU(p.status, p.duCount||0)}</span></div><div style="font-size:0.75rem; color:#64748b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.tim}</div></div><div style="flex-shrink:0;">${btn}</div>`;frag.appendChild(el);});w.appendChild(frag);}
+    function getJamFormat(){return new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});}
+    function ambilDU1(id){const p=DATA.peserta.find(item=>item.id===id);if(!p)return;p.status='siap_du1';p.duCount=1;const logAda=DATA.logDU.find(l=>l.pesertaId===p.id&&l.jenis==='DU 1');if(!logAda){DATA.logDU.push({id:Date.now()+Math.random(),pesertaId:p.id,nama:p.nama,tim:p.tim,jenis:'DU 1',biaya:DATA.tarifDU,lunas:false,jam:getJamFormat()});}simpanAuto();renderMejaDU();}
+    function batalDU1(id){const p=DATA.peserta.find(item=>item.id===id);if(!p)return;p.status='kalah_babak1';p.duCount=0;DATA.logDU=DATA.logDU.filter(l=>!(l.pesertaId===p.id&&l.jenis==='DU 1'));simpanAuto();renderMejaDU();}
+    function ambilDU2MasukBabak2(id){const p=DATA.peserta.find(item=>item.id===id);if(!p)return;p.duCount=2;p.status='tunggu_bab2';const logAda=DATA.logDU.find(l=>l.pesertaId===p.id&&l.jenis==='DU 2');if(!logAda){DATA.logDU.push({id:Date.now()+Math.random(),pesertaId:p.id,nama:p.nama,tim:p.tim,jenis:'DU 2',biaya:DATA.tarifDU,lunas:false,jam:getJamFormat()});}simpanAuto();renderMejaDU();alert(`Sukses! ${p.nama} (${p.tim}) OTOMATIS standby di Babak 2.`);}
+    function batalDU2(id){const p=DATA.peserta.find(item=>item.id===id);if(!p)return;p.status='kalah_du1';p.duCount=1;DATA.logDU=DATA.logDU.filter(l=>!(l.pesertaId===p.id&&l.jenis==='DU 2'));simpanAuto();renderMejaDU();}
+    function simulasiAmbilDUSemua(){const antrean=DATA.peserta.filter(p=>p.status==='kalah_babak1'||p.status==='kalah_du1');if(antrean.length===0)return alert('Tidak ada antrean!');antrean.forEach(p=>{if(p.status==='kalah_babak1'){ambilDU1(p.id);}else if(p.status==='kalah_du1'){ambilDU2MasukBabak2(p.id);}});simpanAuto();renderMejaDU();alert('⚡ Selesai ambil DU!');}
+    function filterMejaDU(){const q=document.getElementById('cariDU').value.toLowerCase().trim();document.querySelectorAll('.baris-du').forEach(el=>{const n=el.getAttribute('data-nama');const t=el.getAttribute('data-tim');if(n.includes(q)||t.includes(q)){el.style.display='flex';}else{el.style.display='none';}});}
+    function toggleLunasDU(id){const l=DATA.logDU.find(item=>item.id===id);if(l){l.lunas=!l.lunas;simpanAuto();renderRekapDU();}}
+    function renderRekapDU(){const tb=document.getElementById('tbodyRekapDU');tb.innerHTML='';const list=DATA.logDU||[];let lunas=0;let belum=0;list.forEach(item=>{if(item.lunas)lunas+=(item.biaya||DATA.tarifDU);else belum+=(item.biaya||DATA.tarifDU);});document.getElementById('txtRekapTotalEkor').innerText=`${list.length} Ekor`;document.getElementById('txtRekapLunas').innerText=`Rp ${lunas.toLocaleString('id-ID')}`;document.getElementById('txtRekapBelum').innerText=`Rp ${belum.toLocaleString('id-ID')}`;document.getElementById('labelTglCetakDU').innerText=new Date().toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'short',day:'numeric'});if(list.length===0){tb.innerHTML='<tr><td colspan="6" style="padding:15px; color:#64748b;">Belum ada transaksi DU.</td></tr>';return;}list.forEach((item,idx)=>{const tag=item.jenis==='DU 1'?'<span class="tag-du tag-du1">DU 1</span>':'<span class="tag-du tag-du2">DU 2</span>';const stBtn=item.lunas?`<button class="btn-abu" style="background:#16a34a; padding:4px 6px; font-size:0.72rem;" onclick="toggleLunasDU(${item.id})">✓ LUNAS</button>`:`<button class="btn-merah" style="padding:4px 6px; font-size:0.72rem;" onclick="toggleLunasDU(${item.id})">⏳ BELUM</button>`;tb.innerHTML+=`<tr><td>${idx+1}</td><td style="font-weight:bold; text-align:left; padding-left:4px;">${item.nama}</td><td style="text-align:left; padding-left:4px; text-transform:uppercase;">${item.tim}</td><td>${tag}</td><td style="color:#64748b; font-size:0.75rem;">${item.jam}</td><td>${stBtn}</td></tr>`;});}
+    function arsipkanBabakIni(){if(!DATA.riwayatBabak)DATA.riwayatBabak=[];const clone=JSON.parse(JSON.stringify(DATA.matches));DATA.riwayatBabak.push({babak:DATA.babak,fase:DATA.fase,matches:clone});}
+    function kunciHasilBabak(){const belumSelesai=DATA.matches.some(m=>!m.pemenang);if(belumSelesai)return alert('Masih ada partai yang belum selesai!');arsipkanBabakIni();if(DATA.babak===1&&DATA.fase==='UTAMA'){DATA.matches.forEach(m=>{const win=DATA.peserta.find(p=>p.id===m.pemenang);const losId=(m.pemenang===m.b1.id)?m.b2?.id:m.b1.id;const los=DATA.peserta.find(p=>p.id===losId);if(win)win.status='tunggu_bab2';if(los)los.status='kalah_babak1';});DATA.matches=[];simpanAuto();alert('Babak 1 Selesai! Silakan buka Meja DU.');bukaTab('tab-du');return;}if(DATA.fase==='DU1'){DATA.matches.forEach(m=>{const win=DATA.peserta.find(p=>p.id===m.pemenang);const losId=(m.pemenang===m.b1.id)?m.b2?.id:m.b1.id;const los=DATA.peserta.find(p=>p.id===losId);if(win)win.status='tunggu_bab2';if(los){if(DATA.maksDU===2)los.status='kalah_du1';else los.status='gugur';}});DATA.matches=[];DATA.fase='LANJUTAN';simpanAuto();if(DATA.maksDU===2){alert('Putaran DU 1 Selesai! Yang kalah berhak ambil DU 2.');bukaTab('tab-du');}else{alert('Putaran DU 1 Selesai!');bukaTab('tab-input');}return;}DATA.matches.forEach(m=>{const win=DATA.peserta.find(p=>p.id===m.pemenang);const losId=(m.pemenang===m.b1.id)?m.b2?.id:m.b1.id;const los=DATA.peserta.find(p=>p.id===losId);if(win)win.status='aktif';if(los)los.status='gugur';});const sisa=DATA.peserta.filter(p=>p.status==='aktif');if(sisa.length<=1){alert(`🏆 LOMBA SELESAI!\nJUARA 1: ${sisa[0]?`${sisa[0].nama} (${sisa[0].tim})`:'-'}`);DATA.matches=[];simpanAuto();bukaTab('tab-riwayat');renderRiwayat();return;}DATA.babak++;DATA.matches=[];simpanAuto();alert(`Masuk ke Babak ${DATA.babak}. Sisa ${sisa.length} burung.`);bukaTab('tab-input');}
+    function renderRiwayat(){const w=document.getElementById('wadahRiwayatLomba');w.innerHTML='';const q=(document.getElementById('cariRiwayat')?.value||'').toLowerCase().trim();if(!DATA.riwayatBabak||DATA.riwayatBabak.length===0){w.innerHTML='<div class="card" style="text-align:center; font-size:0.85rem; color:#64748b;">Belum ada riwayat.</div>';return;}DATA.riwayatBabak.forEach(rb=>{let list=rb.matches;if(q){list=rb.matches.filter(m=>{const b1n=(m.b1?.nama||'').toLowerCase();const b1t=(m.b1?.tim||'').toLowerCase();const b2n=(m.b2?.nama||'').toLowerCase();const b2t=(m.b2?.tim||'').toLowerCase();return b1n.includes(q)||b1t.includes(q)||b2n.includes(q)||b2t.includes(q);});}if(list.length===0)return;let trs='';list.forEach(m=>{const du1=renderLabelDUBurung(m.b1.duCount||0);if(m.isBye){trs+=`<tr><td class="no-terbang-cell">${m.noTerbang}.</td><td class="team-cell">${m.b1.tim}</td><td class="bird-cell" style="font-weight:900; color:#16a34a; font-size:0.78rem;">${m.b1.nama} ${du1} (MENANG)</td><td class="vs-cell">-</td><td colspan="2" style="background:#fef08a; color:#854d0e; font-size:0.75rem; font-weight:bold;">GANTIL (LOLOS)</td></tr>`;}else{const du2=renderLabelDUBurung(m.b2.duCount||0);const w1=m.pemenang===m.b1.id;const w2=m.pemenang===m.b2.id;trs+=`<tr><td class="no-terbang-cell">${m.noTerbang}.</td><td class="team-cell">${m.b1.tim}</td><td class="bird-cell" style="font-size:0.78rem; font-weight:bold; color:${w1?'#16a34a':'#64748b'};">${m.b1.nama} ${du1} ${w1?'👑 (MENANG)':''}</td><td class="vs-cell">VS</td><td class="team-cell">${m.b2.tim}</td><td class="bird-cell" style="font-size:0.78rem; font-weight:bold; color:${w2?'#16a34a':'#64748b'};">${m.b2.nama} ${du2} ${w2?'👑 (MENANG)':''}</td></tr>`;}});w.innerHTML+=`<div class="riwayat-babak-box"><div class="riwayat-header"><span>BABAK: ${rb.babak} (${rb.fase})</span><span style="font-size:0.75rem; color:#94a3b8;">${rb.matches.length} Partai</span></div><table class="tabel-lomba"><thead><tr><th style="width:8%;">NO</th><th style="width:21%;">TEAM</th><th style="width:23%;">BURUNG</th><th style="width:4%;">VS</th><th style="width:21%;">TEAM</th><th style="width:23%;">BURUNG</th></tr></thead><tbody>${trs}</tbody></table></div>`;});}
+    function downloadCanvasImage(cvs,nm){const a=document.createElement('a');a.download=`${nm}_${Date.now()}.png`;a.href=cvs.toDataURL('image/png');a.click();}
+    function simpanFotoBaganKloter(){const dom=document.getElementById('bukuKloterActiveDOM');if(!dom)return alert('Bagan kosong!');html2canvas(dom,{scale:2}).then(c=>downloadCanvasImage(c,`Bagan_Kloter_${DATA.kloterDipilih}`));}
+    function simpanFotoRekapDU(){const dom=document.getElementById('areaCetakRekapDU');html2canvas(dom,{scale:2}).then(c=>downloadCanvasImage(c,'Rekap_Keuangan_DU'));}
+    function simpanFotoRiwayat(){const dom=document.getElementById('wadahRiwayatLomba');if(!DATA.riwayatBabak||DATA.riwayatBabak.length===0)return alert('Riwayat kosong!');html2canvas(dom,{scale:2}).then(c=>downloadCanvasImage(c,'Riwayat_Lomba'));}
+    function cetakRiwayat(){window.print();}
+    function cetakSemua(){const w=document.getElementById('wadahTabelKloter');const maxK=Math.max(...DATA.matches.map(m=>m.kloterNo));let all='';for(let k=1;k<=maxK;k++){const mk=DATA.matches.filter(m=>m.kloterNo===k);let trs='';mk.forEach(m=>{const du1=renderLabelDUBurung(m.b1.duCount||0);if(m.isBye){trs+=`<tr><td class="no-terbang-cell">${m.noTerbang}.</td><td class="team-cell">${m.b1.tim}</td><td style="font-weight:900;">${m.b1.nama} ${du1}</td><td class="vs-cell">-</td><td colspan="2">GANTIL / BYE</td></tr>`;}else{const du2=renderLabelDUBurung(m.b2.duCount||0);trs+=`<tr><td class="no-terbang-cell">${m.noTerbang}.</td><td class="team-cell">${m.b1.tim}</td><td style="font-weight:900;">${m.b1.nama} ${du1}</td><td class="vs-cell">VS</td><td class="team-cell">${m.b2.tim}</td><td style="font-weight:900;">${m.b2.nama} ${du2}</td></tr>`;}});all+=`<div class="buku-kloter"><div style="font-weight:900; font-size:1.1rem; margin-bottom:6px; border-bottom:2px solid #000; padding-bottom:4px; display:flex; justify-content:space-between;"><span>KLOTER: ${k}</span><span>BABAK: ${DATA.babak} (${DATA.fase})</span></div><table class="tabel-lomba"><thead><tr><th>NO.</th><th>NAMA TEAM</th><th>NAMA BURUNG</th><th>VS</th><th>NAMA TEAM</th><th>NAMA BURUNG</th></tr></thead><tbody>${trs}</tbody></table></div>`;}w.innerHTML=all;window.print();renderKloterAktif();}
+    function resetDatabaseAktif(){const label=modeSekarang==='RESMI'?'LOMBA RESMI':'UJI COBA';if(confirm(`Yakin reset data ${label}? Semua data peserta, bagan, riwayat, dan kas DU akan dihapus.`)){localStorage.removeItem(getDBKey());location.reload();}}
+    function bukaTab(tabId){DATA.tabAktif=tabId;simpanAuto();document.getElementById('tab-input').style.display='none';document.getElementById('tab-bagan').style.display='none';document.getElementById('tab-du').style.display='none';document.getElementById('tab-rekap-du').style.display='none';document.getElementById('tab-riwayat').style.display='none';document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));document.getElementById(tabId).style.display='block';if(tabId==='tab-input')document.getElementById('btnTab1').classList.add('active');if(tabId==='tab-bagan')document.getElementById('btnTab2').classList.add('active');if(tabId==='tab-du'){document.getElementById('btnTab3').classList.add('active');renderMejaDU();}if(tabId==='tab-rekap-du'){document.getElementById('btnTab5').classList.add('active');renderRekapDU();}if(tabId==='tab-riwayat'){document.getElementById('btnTab4').classList.add('active');renderRiwayat();}}
+    function downloadBackup(){const str='data:text/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(DATA));const a=document.createElement('a');a.setAttribute('href',str);a.setAttribute('download',`Backup_Merpati_${modeSekarang}_Babak${DATA.babak}.json`);a.click();}
+    function uploadBackup(ev){const file=ev.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(e){try{const parsed=JSON.parse(e.target.result);if(parsed&&parsed.peserta){DATA=parsed;simpanAuto();alert('Data lomba berhasil dipulihkan!');location.reload();}else{alert('Format data tidak cocok.');}}catch(err){alert('Gagal membaca file backup.');}};reader.readAsText(file);}
+
+    periksaLisensiAplikasi();terapkanTampilanMode();updateHeader();
+    if(DATA.matches.length>0){renderDropdownKloter();renderKloterAktif();}
+    bukaTab(DATA.tabAktif||'tab-input');
+  </script>
+</body>
+</html>
